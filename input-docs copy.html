@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Input — Design Documentation</title>
+<style>
+  :root {
+    --bg-bold: #1a2e3b;
+    --bg-subdued: #f4f6f8;
+    --bg-light: #f9fafb;
+    --bg-neutral: #f0f2f4;
+    --surf-neut-subdued: #eef0f3;
+    --surf-neut-light: #f7f8fa;
+    --surf-brand-primary: #0d6e8a;
+    --surf-brand-subdued: #cce8ef;
+    --surf-success-subdued: #d4f0e0;
+    --surf-error-subdued: #fde8e8;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --text-tertiary: #9ca3af;
+    --text-light: #ffffff;
+    --text-brand: #0d6e8a;
+    --text-error: #b91c1c;
+    --text-success: #166534;
+    --inter-primary: #0d6e8a;
+    --inter-error: #dc2626;
+    --inter-success: #16a34a;
+    --border-separator: #e5e7eb;
+    --border-input: #d1d5db;
+    --icon-success: #16a34a;
+    --icon-error: #dc2626;
+    --radius-md: 8px;
+    --radius-sm: 4px;
+    --radius-pill: 24px;
+    --font: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: #e9ebee; color: var(--text-primary); }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 1440px; margin: 0 auto; background: white; }
+  .section { width: 100%; }
+  .section-inner { max-width: 1200px; margin: 0 auto; padding: 64px 120px; display: flex; flex-direction: column; gap: 40px; }
+
+  /* ── COVER ── */
+  .cover { background: var(--bg-bold); padding: 64px 120px; display: flex; flex-direction: column; align-items: flex-start; gap: 16px; min-height: 320px; justify-content: center; }
+  .cover-inner { max-width: 720px; display: flex; flex-direction: column; gap: 16px; }
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .pill-brand { background: var(--surf-brand-subdued); color: var(--bg-bold); }
+  .pill-success { background: var(--surf-success-subdued); color: var(--text-success); }
+  .pill-muted { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); }
+  .cover-title { font-size: 32px; font-weight: 700; color: var(--text-light); line-height: 1.2; }
+  .cover-desc { font-size: 16px; color: rgba(255,255,255,0.75); line-height: 1.6; max-width: 640px; }
+
+  /* ── SECTION HEADER ── */
+  .sec-hdr { display: flex; flex-direction: column; gap: 8px; }
+  .sec-hdr h2 { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+  .sec-hdr p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; }
+  hr.divider { border: none; border-top: 1px solid var(--border-separator); margin: 0; }
+
+  /* ── VARIANT OVERVIEW ── */
+  .variant-table { display: flex; flex-direction: column; gap: 8px; }
+  .col-headers { display: grid; align-items: end; padding-bottom: 8px; }
+  .col-hdr-cell { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .col-hdr-cell .name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .col-hdr-cell .desc { font-size: 11px; color: var(--text-tertiary); }
+  .variant-row { display: grid; align-items: center; background: var(--surf-neut-light); border-radius: var(--radius-md); padding: 16px 0; }
+  .row-label { padding: 0 16px 0 20px; display: flex; flex-direction: column; gap: 4px; }
+  .row-label .lname { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .row-label .ldesc { font-size: 11px; color: var(--text-secondary); }
+  .instance-cell { display: flex; align-items: center; justify-content: center; padding: 0 12px; }
+
+  /* ── FAKE INPUT COMPONENT ── */
+  .input-wrap { display: flex; flex-direction: column; gap: 0; width: 100%; max-width: 220px; }
+  .input-field { display: flex; align-items: center; border: 1.5px solid var(--border-input); border-radius: 6px; background: white; overflow: hidden; position: relative; }
+  .input-field.inactive { border-color: var(--border-input); }
+  .input-field.filled { border-color: var(--border-input); }
+  .input-field.active { border-color: var(--inter-primary); box-shadow: 0 0 0 2px rgba(13,110,138,0.12); }
+  .input-field.focus { border-color: var(--inter-primary); box-shadow: 0 0 0 3px rgba(13,110,138,0.18); }
+  .input-field.error { border-color: var(--inter-error); box-shadow: 0 0 0 2px rgba(220,38,38,0.1); }
+  .input-field.locked { border-color: var(--border-input); background: var(--bg-subdued); }
+  .input-field.size-lg { height: 52px; }
+  .input-field.size-md { height: 48px; }
+  .input-field.size-sm { height: 44px; }
+  .input-field.size-xs { height: 36px; }
+  .input-content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 12px; gap: 1px; overflow: hidden; }
+  .input-label { font-size: 10px; font-weight: 600; color: var(--inter-primary); line-height: 1; }
+  .input-label.error { color: var(--inter-error); }
+  .input-value { font-size: 13px; color: var(--text-primary); }
+  .input-placeholder { font-size: 13px; color: var(--text-tertiary); }
+  .input-slot { display: flex; align-items: center; justify-content: center; height: 100%; padding: 0 10px; font-size: 12px; color: var(--text-secondary); background: var(--bg-subdued); border-right: 1px solid var(--border-input); white-space: nowrap; }
+  .input-slot.right { border-right: none; border-left: 1px solid var(--border-input); }
+  .helper-row { display: flex; align-items: center; gap: 4px; padding-top: 4px; }
+  .helper-text { font-size: 11px; color: var(--text-secondary); }
+  .helper-text.error { color: var(--inter-error); }
+  .helper-icon { font-size: 11px; }
+
+  /* ── STATES SECTION ── */
+  .states-bg { background: var(--bg-light); }
+
+  /* ── SLOT USAGE ── */
+  .slot-demo-row { display: flex; gap: 32px; flex-wrap: wrap; }
+  .slot-cell { display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; min-width: 160px; }
+  .slot-cell .slot-label { font-size: 13px; color: var(--text-secondary); text-align: center; }
+  .rules-card { background: var(--bg-light); border-radius: var(--radius-md); padding: 24px 32px; display: flex; flex-direction: column; gap: 8px; }
+  .rules-card h4 { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+  .rules-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* ── USAGE GUIDELINES ── */
+  .usage-bg { background: var(--bg-neutral); }
+  .do-dont-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .do-col, .dont-col { display: flex; flex-direction: column; gap: 16px; }
+  .card { border-radius: var(--radius-md); overflow: hidden; }
+  .card-bar { height: 4px; }
+  .card-bar.do { background: var(--icon-success); }
+  .card-bar.dont { background: var(--icon-error); }
+  .card-body { background: var(--surf-neut-subdued); padding: 20px 24px; display: flex; flex-direction: column; gap: 8px; }
+  .card-status { font-size: 12px; font-weight: 700; }
+  .card-status.do { color: var(--icon-success); }
+  .card-status.dont { color: var(--icon-error); }
+  .card-title { font-size: 15px; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
+  .card-body-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .section-inner { padding: 48px 24px; }
+    .cover { padding: 48px 24px; }
+    .do-dont-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ═══════════════════════════════════ COVER ═══════════════════════════════ -->
+  <div class="cover">
+    <div class="cover-inner">
+      <div class="pill-row">
+        <span class="pill pill-muted">Form Controls</span>
+        <span class="pill pill-muted">Input</span>
+      </div>
+      <div class="cover-title">Input</div>
+      <div class="cover-desc">A flexible text input field for collecting user data — available in 4 sizes and 6 interactive states, with optional left/right content slots and helper text.</div>
+      <div class="pill-row">
+        <span class="pill pill-success">Stable</span>
+        <span class="pill pill-muted">v1.0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ VARIANT OVERVIEW ═══════════════════════ -->
+  <div class="section" style="background: var(--surf-neut-subdued);">
+    <div class="section-inner">
+      <div class="sec-hdr">
+        <h2>Variant Overview</h2>
+        <p>All Variant × Size combinations. Use Inactive as the resting state for static design work.</p>
+      </div>
+      <div class="variant-table">
+
+        <!-- Column headers -->
+        <div class="col-headers" style="grid-template-columns: 160px repeat(4, 1fr);">
+          <div></div>
+          <div class="col-hdr-cell"><span class="name">LG</span><span class="desc">64px height</span></div>
+          <div class="col-hdr-cell"><span class="name">MD</span><span class="desc">60px height</span></div>
+          <div class="col-hdr-cell"><span class="name">SM</span><span class="desc">56px height</span></div>
+          <div class="col-hdr-cell"><span class="name">XS</span><span class="desc">40px height</span></div>
+        </div>
+        <hr class="divider" />
+
+        <!-- Rows -->
+        <script>
+          const variants = [
+            { name:'Inactive', desc:'Empty / unfocused', cls:'inactive', label:'Input label', value:null },
+            { name:'Filled',   desc:'Has a value',       cls:'filled',   label:'Input label', value:'Placeholder here' },
+            { name:'Active',   desc:'User is typing',    cls:'active',   label:'Input label', value:'Typing...' },
+            { name:'Focus',    desc:'Keyboard focused',  cls:'focus',    label:'Input label', value:null },
+            { name:'Error',    desc:'Validation failed', cls:'error',    label:'Input label', value:'Invalid value', helper: true, helperText:'Please enter a valid value.' },
+            { name:'Locked',   desc:'Read-only',         cls:'locked',   label:'Input label', value:'Read-only value' },
+          ];
+          const sizes = ['lg','md','sm','xs'];
+          variants.forEach(v => {
+            document.write(`
+              <div class="variant-row" style="grid-template-columns: 160px repeat(4, 1fr);">
+                <div class="row-label">
+                  <span class="lname">${v.name}</span>
+                  <span class="ldesc">${v.desc}</span>
+                </div>
+                ${sizes.map(sz => `
+                  <div class="instance-cell">
+                    <div class="input-wrap">
+                      <div class="input-field ${v.cls} size-${sz}">
+                        <div class="input-content">
+                          <span class="input-label${v.cls==='error'?' error':''}">${v.label}</span>
+                          ${v.value ? `<span class="input-value">${v.value}</span>` : `<span class="input-placeholder">Placeholder here</span>`}
+                        </div>
+                      </div>
+                      ${v.helper ? `<div class="helper-row"><span class="helper-icon">ⓘ</span><span class="helper-text error">${v.helperText}</span></div>` : ''}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `);
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ STATES ═════════════════════════════ -->
+  <div class="section states-bg">
+    <div class="section-inner">
+      <div class="sec-hdr">
+        <h2>States</h2>
+        <p>Use Inactive for all static design work. Filled, Active, and Focus represent interaction phases; Error and Locked are functional states.</p>
+      </div>
+      <div class="variant-table">
+        <div class="col-headers" style="grid-template-columns: 120px repeat(6, 1fr);">
+          <div></div>
+          <div class="col-hdr-cell"><span class="name">Inactive</span><span class="desc">Resting</span></div>
+          <div class="col-hdr-cell"><span class="name">Filled</span><span class="desc">Has value</span></div>
+          <div class="col-hdr-cell"><span class="name">Active</span><span class="desc">Typing</span></div>
+          <div class="col-hdr-cell"><span class="name">Focus</span><span class="desc">Focused</span></div>
+          <div class="col-hdr-cell"><span class="name">Error</span><span class="desc">Invalid</span></div>
+          <div class="col-hdr-cell"><span class="name">Locked</span><span class="desc">Read-only</span></div>
+        </div>
+        <hr class="divider" />
+        <script>
+          const statesData = [
+            { name:'LG', cls:'size-lg', sz:'lg' },
+            { name:'MD', cls:'size-md', sz:'md' },
+            { name:'SM', cls:'size-sm', sz:'sm' },
+            { name:'XS', cls:'size-xs', sz:'xs' },
+          ];
+          const stateVariants = [
+            { cls:'inactive', value:null },
+            { cls:'filled',   value:'Filled value' },
+            { cls:'active',   value:'Typing...' },
+            { cls:'focus',    value:null },
+            { cls:'error',    value:'Bad input' },
+            { cls:'locked',   value:'Locked value' },
+          ];
+          statesData.forEach(row => {
+            document.write(`
+              <div class="variant-row" style="grid-template-columns: 120px repeat(6, 1fr);">
+                <div class="row-label"><span class="lname">${row.name}</span></div>
+                ${stateVariants.map(sv => `
+                  <div class="instance-cell">
+                    <div class="input-wrap">
+                      <div class="input-field ${sv.cls} ${row.cls}">
+                        <div class="input-content">
+                          <span class="input-label${sv.cls==='error'?' error':''}">Label</span>
+                          ${sv.value ? `<span class="input-value">${sv.value}</span>` : `<span class="input-placeholder">Placeholder</span>`}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            `);
+          });
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ SLOT USAGE ═════════════════════════════ -->
+  <div class="section" style="background: var(--surf-neut-subdued);">
+    <div class="section-inner">
+      <div class="sec-hdr">
+        <h2>Slot Usage</h2>
+        <p>Input supports three optional slots: Left content, Right content, and Helper text. Each can be toggled independently.</p>
+      </div>
+
+      <div class="slot-demo-row">
+        <!-- Default -->
+        <div class="slot-cell">
+          <div class="input-wrap" style="max-width:180px;">
+            <div class="input-field inactive size-md">
+              <div class="input-content"><span class="input-label">Label</span><span class="input-placeholder">Placeholder</span></div>
+            </div>
+          </div>
+          <span class="slot-label">Default</span>
+        </div>
+        <!-- Left content -->
+        <div class="slot-cell">
+          <div class="input-wrap" style="max-width:200px;">
+            <div class="input-field filled size-md">
+              <div class="input-slot">+61</div>
+              <div class="input-content"><span class="input-label">Phone</span><span class="input-value">04 1234 5678</span></div>
+            </div>
+          </div>
+          <span class="slot-label">Left Content</span>
+        </div>
+        <!-- Right content -->
+        <div class="slot-cell">
+          <div class="input-wrap" style="max-width:200px;">
+            <div class="input-field filled size-md">
+              <div class="input-content"><span class="input-label">Price</span><span class="input-value">250</span></div>
+              <div class="input-slot right">AUD</div>
+            </div>
+          </div>
+          <span class="slot-label">Right Content</span>
+        </div>
+        <!-- Helper text -->
+        <div class="slot-cell">
+          <div class="input-wrap" style="max-width:200px;">
+            <div class="input-field error size-md">
+              <div class="input-content"><span class="input-label error">Email</span><span class="input-value">bad@input</span></div>
+            </div>
+            <div class="helper-row"><span class="helper-icon">ⓘ</span><span class="helper-text error">Please enter a valid email address.</span></div>
+          </div>
+          <span class="slot-label">With Helper Text</span>
+        </div>
+        <!-- Left + Right -->
+        <div class="slot-cell">
+          <div class="input-wrap" style="max-width:220px;">
+            <div class="input-field filled size-md">
+              <div class="input-slot">🇦🇺 AU</div>
+              <div class="input-content"><span class="input-label">Phone</span><span class="input-value">04 1234 5678</span></div>
+              <div class="input-slot right">▾</div>
+            </div>
+          </div>
+          <span class="slot-label">Left + Right</span>
+        </div>
+        <!-- All slots -->
+        <div class="slot-cell">
+          <div class="input-wrap" style="max-width:220px;">
+            <div class="input-field error size-md">
+              <div class="input-slot">🇦🇺</div>
+              <div class="input-content"><span class="input-label error">Phone</span><span class="input-value">04 bad</span></div>
+              <div class="input-slot right">▾</div>
+            </div>
+            <div class="helper-row"><span class="helper-icon">ⓘ</span><span class="helper-text error">Invalid number format.</span></div>
+          </div>
+          <span class="slot-label">All Slots</span>
+        </div>
+      </div>
+
+      <div class="rules-card">
+        <h4>Slot guidelines</h4>
+        <p>• <strong>Left content</strong> — use for prefix icons, country codes, or currency symbols that contextualise the expected input.</p>
+        <p>• <strong>Right content</strong> — use for suffix labels, unit indicators, or secondary actions (e.g. clear, toggle visibility).</p>
+        <p>• <strong>Helper text</strong> — always show when extra guidance or error feedback is needed. Pair with the Error state for validation messages.</p>
+        <p>• Both Left and Right content can be active simultaneously when each communicates a distinct piece of information.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════ USAGE GUIDELINES ══════════════════════ -->
+  <div class="section usage-bg">
+    <div class="section-inner">
+      <div class="sec-hdr">
+        <h2>Usage Guidelines</h2>
+        <p>Guidance on when and how to use the Input component correctly.</p>
+      </div>
+
+      <div class="do-dont-grid">
+        <div class="do-col">
+          <div class="card">
+            <div class="card-bar do"></div>
+            <div class="card-body">
+              <span class="card-status do">✓  Do</span>
+              <div class="card-title">Match size to context</div>
+              <div class="card-body-text">Use LG for prominent hero forms, MD for standard forms, SM/XS for dense or inline UIs.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-bar do"></div>
+            <div class="card-body">
+              <span class="card-status do">✓  Do</span>
+              <div class="card-title">Always show a visible label</div>
+              <div class="card-body-text">Users need to know what to enter at all times — label text must always be visible above or inside the field.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-bar do"></div>
+            <div class="card-body">
+              <span class="card-status do">✓  Do</span>
+              <div class="card-title">Pair Error with Helper text</div>
+              <div class="card-body-text">When validation fails, set the Error state and include a Helper message that tells the user exactly how to fix the problem.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-bar do"></div>
+            <div class="card-body">
+              <span class="card-status do">✓  Do</span>
+              <div class="card-title">Use slots for contextual signals</div>
+              <div class="card-body-text">Left/Right content slots communicate domain context (e.g. "+61" prefix, "AU" suffix) that the user needs before typing.</div>
+            </div>
+          </div>
+        </div>
+        <div class="dont-col">
+          <div class="card">
+            <div class="card-bar dont"></div>
+            <div class="card-body">
+              <span class="card-status dont">✗  Don't</span>
+              <div class="card-title">Mix sizes in the same form</div>
+              <div class="card-body-text">Inconsistent sizes disrupt visual rhythm and make forms feel unpolished. Pick one size per form and stick to it.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-bar dont"></div>
+            <div class="card-body">
+              <span class="card-status dont">✗  Don't</span>
+              <div class="card-title">Rely on placeholder text as label</div>
+              <div class="card-body-text">Placeholder disappears when the user starts typing — this leaves them with no label to reference mid-input.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-bar dont"></div>
+            <div class="card-body">
+              <span class="card-status dont">✗  Don't</span>
+              <div class="card-title">Show errors without explanation</div>
+              <div class="card-body-text">"Invalid input" alone is not actionable. Always tell the user what went wrong and how to correct it.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-bar dont"></div>
+            <div class="card-body">
+              <span class="card-status dont">✗  Don't</span>
+              <div class="card-title">Overload both slots with unrelated content</div>
+              <div class="card-body-text">Filling both Left and Right with decorative or redundant content clutters the input and reduces scannability.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

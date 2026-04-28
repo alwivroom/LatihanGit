@@ -1,0 +1,188 @@
+{
+  "componentName": "Button",
+  "generatedAt": "2026-04-12T00:00:00.000Z",
+  "sections": {
+    "cover": {
+      "include": true,
+      "title": "Button",
+      "subtitle": "Buttons trigger actions and let users make choices with a single tap or click — the primary driver of interaction in any interface."
+    },
+    "anatomy": {
+      "include": true,
+      "parts": [
+        { "name": "Container", "description": "The outer frame defining size, background, border, and radius. Changes per Type & Size.", "optional": false, "controlledBy": "Size, Type" },
+        { "name": "Label", "description": "Required action text. Always a verb phrase describing the outcome. Controlled via buttonText property.", "optional": false, "controlledBy": "buttonText" },
+        { "name": "Left Icon", "description": "Optional icon left of the label to reinforce action meaning. Shown when iconLeft = true.", "optional": true, "controlledBy": "iconLeft" },
+        { "name": "Right Icon", "description": "Optional icon right of the label, typically for direction or submenu. Shown when iconRight = true.", "optional": true, "controlledBy": "iconRight" }
+      ]
+    },
+    "variantOverview": {
+      "include": true,
+      "primaryDimension": "Type",
+      "secondaryDimension": "Size",
+      "values": [
+        { "value": "Primary", "description": "Filled high-emphasis. Use for the single most important action on a screen." },
+        { "value": "Secondary", "description": "Tinted medium-emphasis. Use when a Primary is already present and a supporting action is needed." },
+        { "value": "Tertiary", "description": "Outlined low-emphasis. Use for less critical actions in cards, list rows, or alongside Primary." },
+        { "value": "Text Button", "description": "No background, no border. Use for low-priority inline actions embedded in content or toolbars. Available in SM & MD only." }
+      ]
+    },
+    "states": {
+      "include": true,
+      "dimension": "State",
+      "values": [
+        { "state": "Default", "description": "Resting state. No interaction has occurred." },
+        { "state": "Hover", "description": "Cursor is positioned over the button on desktop. Background darkens to indicate interactivity." },
+        { "state": "Disabled", "description": "Action is unavailable. Button is non-interactive and visually muted at 50% opacity. Always pair with helper text explaining why." }
+      ]
+    },
+    "properties": {
+      "include": true,
+      "items": [
+        {
+          "name": "iconLeft",
+          "type": "Boolean",
+          "default": "false",
+          "purpose": "Adds an icon to the left of the label to visually reinforce the action.",
+          "when": "Use when the icon adds meaning — e.g. a download arrow before 'Export', a search icon before 'Find'."
+        },
+        {
+          "name": "iconRight",
+          "type": "Boolean",
+          "default": "false",
+          "purpose": "Adds an icon to the right of the label, typically to indicate direction or a submenu.",
+          "when": "Use for navigation actions ('Next →'), external links, or dropdown triggers."
+        },
+        {
+          "name": "buttonText",
+          "type": "Text",
+          "default": "Search",
+          "purpose": "The visible action label shown inside the button.",
+          "when": "Always set. Use a verb phrase that describes the outcome, not the interaction."
+        }
+      ]
+    },
+    "usageGuidelines": {
+      "include": true,
+      "pairs": [
+        {
+          "do": {
+            "title": "Gunakan satu Primary per screen section",
+            "body": "Reserve Primary untuk satu aksi terpenting. Dua Primary berdampingan menghilangkan hierarki dan membuat user ragu harus klik yang mana.",
+            "visual": {
+              "instanceCount": 2,
+              "instances": [
+                { "variantProps": { "Type": "Primary", "Size": "MD", "State": "Default" }, "booleanProps": { "iconLeft": false, "iconRight": false }, "textProps": { "buttonText": "Save changes" } },
+                { "variantProps": { "Type": "Secondary", "Size": "MD", "State": "Default" }, "booleanProps": { "iconLeft": false, "iconRight": false }, "textProps": { "buttonText": "Cancel" } }
+              ],
+              "caption": "Hierarki jelas — satu aksi dominan, satu pendukung"
+            }
+          },
+          "dont": {
+            "title": "Jangan taruh dua Primary button berdampingan",
+            "body": "Dua CTA dengan emphasis sama menciptakan decision paralysis — user tidak tahu mana yang 'benar'.",
+            "visual": {
+              "instanceCount": 2,
+              "instances": [
+                { "variantProps": { "Type": "Primary", "Size": "MD", "State": "Default" }, "booleanProps": { "iconLeft": false, "iconRight": false }, "textProps": { "buttonText": "Cancel" } },
+                { "variantProps": { "Type": "Primary", "Size": "MD", "State": "Default" }, "booleanProps": { "iconLeft": false, "iconRight": false }, "textProps": { "buttonText": "Save" } }
+              ],
+              "caption": "Dua Primary bersaing — hierarki runtuh"
+            }
+          }
+        },
+        {
+          "do": {
+            "title": "Tulis label yang mendeskripsikan outcome",
+            "body": "'Send invoice', 'Delete account', 'Export data' — user tahu persis apa yang terjadi sebelum klik.",
+            "visual": {
+              "instanceCount": 1,
+              "instances": [
+                { "variantProps": { "Type": "Primary", "Size": "MD", "State": "Default" }, "booleanProps": { "iconLeft": false, "iconRight": false }, "textProps": { "buttonText": "Send invoice" } }
+              ],
+              "caption": "Label outcome-oriented — aksi jelas tanpa baca konteks"
+            }
+          },
+          "dont": {
+            "title": "Jangan pakai label vague seperti 'Submit' atau 'OK'",
+            "body": "Label generik memaksa user membaca konteks di sekitarnya, meningkatkan cognitive load dan potensi error.",
+            "visual": {
+              "instanceCount": 1,
+              "instances": [
+                { "variantProps": { "Type": "Primary", "Size": "MD", "State": "Default" }, "booleanProps": { "iconLeft": false, "iconRight": false }, "textProps": { "buttonText": "Submit" } }
+              ],
+              "caption": "Label vague — outcome tidak jelas"
+            }
+          }
+        },
+        {
+          "do": {
+            "title": "Tampilkan Disabled dengan helper text",
+            "body": "Jelaskan mengapa aksi belum tersedia. User harus tahu apa yang perlu dilakukan agar button aktif kembali.",
+            "visual": {
+              "instanceCount": 1,
+              "instances": [
+                { "variantProps": { "Type": "Primary", "Size": "MD", "State": "Disabled" }, "booleanProps": { "iconLeft": false, "iconRight": false }, "textProps": { "buttonText": "Submit Order" } }
+              ],
+              "caption": "Disabled + helper text: 'Add at least one item to your cart'"
+            }
+          },
+          "dont": {
+            "title": "Jangan tampilkan Disabled tanpa konteks",
+            "body": "Disabled button tanpa penjelasan membuat user bingung — mereka tidak tahu apa yang memblokir aksi mereka.",
+            "visual": {
+              "instanceCount": 1,
+              "instances": [
+                { "variantProps": { "Type": "Primary", "Size": "MD", "State": "Disabled" }, "booleanProps": { "iconLeft": false, "iconRight": false }, "textProps": { "buttonText": "Submit Order" } }
+              ],
+              "caption": "Disabled sendiri — user tidak tahu penyebabnya"
+            }
+          }
+        },
+        {
+          "do": {
+            "title": "Gunakan icon saat benar-benar menambah makna",
+            "body": "Icon yang relevan mempercepat pengenalan aksi. iconLeft ideal untuk aksi dengan representasi visual universal (download, search, add).",
+            "visual": {
+              "instanceCount": 1,
+              "instances": [
+                { "variantProps": { "Type": "Primary", "Size": "MD", "State": "Default" }, "booleanProps": { "iconLeft": true, "iconRight": false }, "textProps": { "buttonText": "Export" } }
+              ],
+              "caption": "Icon download memperkuat aksi 'Export'"
+            }
+          },
+          "dont": {
+            "title": "Jangan aktifkan iconLeft dan iconRight bersamaan",
+            "body": "Dua icon mengapit label menciptakan visual noise dan mengurangi prominence label itu sendiri.",
+            "visual": {
+              "instanceCount": 1,
+              "instances": [
+                { "variantProps": { "Type": "Primary", "Size": "MD", "State": "Default" }, "booleanProps": { "iconLeft": true, "iconRight": true }, "textProps": { "buttonText": "Export" } }
+              ],
+              "caption": "Dua icon — label tenggelam, fokus terpecah"
+            }
+          }
+        }
+      ]
+    },
+    "whenToUse": {
+      "include": true,
+      "dimension": "Type",
+      "cards": [
+        { "type": "Primary", "description": "Satu aksi terpenting di layar. Gunakan hanya sekali per section atau view.", "examples": ["Submit form", "Confirm purchase", "Sign up"] },
+        { "type": "Secondary", "description": "Aksi pendukung saat Primary sudah ada di dekatnya.", "examples": ["Save Draft", "Cancel", "Skip"] },
+        { "type": "Tertiary", "description": "Aksi prioritas rendah di card, list row, atau berdampingan dengan grup Primary.", "examples": ["View Details", "Edit", "Learn More"] },
+        { "type": "Text Button", "description": "Aksi minimal-chrome yang embedded dalam konten, toolbar, atau inline flow. (SM & MD only)", "examples": ["Forgot password?", "See all", "Undo"] }
+      ]
+    },
+    "accessibility": {
+      "include": true,
+      "notes": [
+        "Minimum touch target 44×44pt — jangan gunakan Size=SM untuk primary CTA standalone di mobile.",
+        "Label button harus mendeskripsikan outcome aksi: 'Save changes', bukan 'Click here' atau 'Submit'.",
+        "Disabled button harus tetap bisa difokus — gunakan aria-disabled='true' bukan atribut disabled agar screen reader tetap mengumumkan tombol.",
+        "Saat iconLeft/iconRight aktif, set icon ke aria-hidden='true' — label sudah mendeskripsikan aksi, icon tidak perlu dibaca ulang."
+      ]
+    }
+  }
+}

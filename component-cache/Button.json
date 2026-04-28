@@ -1,0 +1,150 @@
+{
+  "componentName": "Button",
+  "componentSetKey": "60:48",
+  "fileKey": "URWJp5UFzkvf1gmaNCFWhV",
+  "path": "Button",
+  "variantProperties": {
+    "Size": {
+      "type": "VARIANT",
+      "values": ["XL", "LG", "MD", "SM"],
+      "defaultValue": "XL"
+    },
+    "Type": {
+      "type": "VARIANT",
+      "values": ["Primary", "Secondary", "Tertiary", "Text Button"],
+      "defaultValue": "Primary"
+    },
+    "State": {
+      "type": "VARIANT",
+      "values": ["Default", "Hover", "Disabled"],
+      "defaultValue": "Default"
+    }
+  },
+  "booleanProperties": {
+    "iconLeft": {
+      "type": "BOOLEAN",
+      "defaultValue": false
+    },
+    "iconRight": {
+      "type": "BOOLEAN",
+      "defaultValue": false
+    }
+  },
+  "textProperties": {
+    "buttonText": {
+      "type": "TEXT",
+      "defaultValue": "Search"
+    }
+  },
+  "instanceSwapProperties": {},
+  "totalVariantCount": 42,
+  "nestedComponents": [
+    {
+      "name": "Icons stroke rounded",
+      "key": "2284:1373",
+      "controlledBy": "iconLeft / iconRight",
+      "controlType": "BOOLEAN",
+      "hasOwnVariants": false,
+      "ownVariantProperties": []
+    }
+  ],
+  "useCases": [
+    {
+      "name": "Primary Action",
+      "when": "Main CTA — highest hierarchy action on a page or modal",
+      "config": { "Type": "Primary", "State": "Default" },
+      "example": "Submit form, Confirm purchase, Sign Up"
+    },
+    {
+      "name": "Secondary Action",
+      "when": "Supporting action alongside a Primary, lower visual emphasis",
+      "config": { "Type": "Secondary", "State": "Default" },
+      "example": "Save Draft (next to Publish), Cancel (next to Confirm)"
+    },
+    {
+      "name": "Tertiary / Outlined Action",
+      "when": "Low-emphasis action, often used in cards or list rows without background fill",
+      "config": { "Type": "Tertiary", "State": "Default" },
+      "example": "View Details, Edit, Learn More"
+    },
+    {
+      "name": "Inline Text Action",
+      "when": "Minimal chrome action embedded within content or toolbars",
+      "config": { "Type": "Text Button", "Size": "SM or MD" },
+      "example": "Forgot password?, See all results, Undo"
+    },
+    {
+      "name": "Disabled Interaction",
+      "when": "Action not yet available — form incomplete, insufficient permissions",
+      "config": { "State": "Disabled" },
+      "example": "Submit (before required fields are filled)"
+    }
+  ],
+  "namingAudit": {
+    "conventionDetected": "Title Case properties, ALL CAPS size values, Title Case state/type values, camelCase boolean & text properties",
+    "score": "Good with minor issues",
+    "issues": [
+      {
+        "severity": "warning",
+        "category": "boolean_names",
+        "current": "iconLeft, iconRight",
+        "suggested": "Has Icon Left, Has Icon Right",
+        "reason": "Boolean props should follow 'Has [X]' or 'Is [X]' prefix convention for clarity in Figma property panel"
+      },
+      {
+        "severity": "warning",
+        "category": "text_property",
+        "current": "buttonText",
+        "suggested": "Label",
+        "reason": "Text props should use a semantic noun in Title Case; 'buttonText' is camelCase and redundantly describes the component rather than the slot"
+      },
+      {
+        "severity": "error",
+        "category": "variant_consistency",
+        "current": "MD Primary Disabled uses 14px/20px (Subtitle-MD 1), while MD Primary Default/Hover uses 15px/24px",
+        "suggested": "Unify MD size to consistent font style — likely 15px/24px for all MD states",
+        "reason": "Inconsistent font sizes within the same Size tier creates visual jank on state transitions"
+      },
+      {
+        "severity": "info",
+        "category": "completeness",
+        "current": "Type=Text Button only exists for Size=SM and Size=MD",
+        "suggested": "Confirm intentional — document as design decision if Text Button is not needed at XL/LG",
+        "reason": "Incomplete variant matrix can confuse developers expecting all Size × Type combinations to exist"
+      },
+      {
+        "severity": "info",
+        "category": "hover_behavior",
+        "current": "Tertiary Hover shows solid fill background (same as Primary Hover), losing its outlined identity",
+        "suggested": "Consider a lighter hover fill for Tertiary to preserve its visual hierarchy vs Primary",
+        "reason": "Tertiary Default has outlined style, but on Hover it becomes visually identical to Primary Hover — hierarchy collapse"
+      }
+    ]
+  },
+  "tokens": {
+    "colors": {
+      "--interactive/primary": "#0765fc",
+      "--interactive/hovered": "#1854b5",
+      "--interactive/secondary": "#d3e6fb",
+      "--interactive/label": "#1854b5",
+      "--text/light": "#ffffff"
+    },
+    "spacing": {
+      "--space/100": "4px",
+      "--space/200": "8px",
+      "--space/300": "12px",
+      "--space/400": "16px",
+      "--space/500": "20px"
+    },
+    "radius": {
+      "--button": "4px"
+    }
+  },
+  "typography": {
+    "XL": { "size": "18px", "lineHeight": "28px", "style": "Subtitle - LG 1" },
+    "LG": { "size": "18px", "lineHeight": "28px", "style": "Subtitle - LG 1" },
+    "MD": { "size": "15px", "lineHeight": "24px", "style": "Subtitle - LG 2 (approx)" },
+    "SM": { "size": "13px", "lineHeight": "24px", "style": "Subtitle - SM 1" }
+  },
+  "analyzedAt": "2026-04-10T00:00:00.000Z"
+}
